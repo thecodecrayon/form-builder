@@ -1,6 +1,8 @@
+import FormView from "./views/form";
+
 const App = () => {
   return (
-    <h1>Hello</h1>
+    <FormView />
   );
 }
 
