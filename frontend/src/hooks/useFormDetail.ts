@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 
 interface Field {
+  _id: string;
   label: string;
   type: string;
   required: boolean;

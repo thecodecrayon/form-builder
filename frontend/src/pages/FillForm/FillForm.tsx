@@ -8,15 +8,20 @@ type Field = {
   options: string[];
 };
 
+interface Form {
+  title: string;
+  description: string;
+  fields: Field[];
+}
+
 type FillFormProps = {
-  form: {
-    title: string;
-    description?: string;
-    fields: Field[];
-  };
+  error: string | null;
+  loading: boolean;
+  form: Form | null;
 };
 
-const FillForm = ({ form }: FillFormProps) => {
+const FillForm = (props: FillFormProps) => {
+  const { form  } = props;
   const [formData, setFormData] = useState<Record<string, any>>({});
 
   if (!form) return <p>No form data available</p>;
