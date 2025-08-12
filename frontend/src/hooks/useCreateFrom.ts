@@ -1,13 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getToken } from "../utils/commonMethods";
-
-interface FormField {
-  label: string;
-  type: string;
-  required: boolean;
-  options?: string[];
-}
+import type { FormField } from "../pages/FillForm/types";
 
 const useCreateForm = () => {
   const [title, setTitle] = useState("");

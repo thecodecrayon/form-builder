@@ -1,17 +1,11 @@
 import { useEffect, useState } from "react";
 import { getToken } from "../utils/commonMethods";
-
-interface Form {
-  title: string,
-  description: string,
-  _id: string,
-  createdAt: string
-}
+import type { SingleForm } from "../pages/FillForm/types";
 
 const useFetchForm = () => {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
-  const [forms, setForms] = useState<Form[]>([]);
+  const [forms, setForms] = useState<SingleForm[]>([]);
 
   const fetchFormList = async () => {
     setLoading(true);

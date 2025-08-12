@@ -1,20 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { getToken } from "../utils/commonMethods";
-
-interface Field {
-  _id: string;
-  label: string;
-  type: string;
-  required: boolean;
-  options: [string];
-}
-
-interface Form {
-  title: string;
-  description: string;
-  fields: Field[];
-}
+import type { Form } from '../pages/FillForm/types';
 
 const useFormDetail = () => {
   const [form, setForm] = useState<Form | null>(null);
