@@ -1,5 +1,6 @@
 import { asyncHandler } from "../utils/asyncHandler.js";
 import User from "../models/user.model.js";
+import { generateToken } from "../utils/generateToken.js";
 
 export const getUsers = asyncHandler(async (req, res) => {
 
@@ -41,4 +42,27 @@ export const createUser = asyncHandler(async (req, res) => {
     user,
     msg: "user created successfully."
   });
+});
+
+export const loginUser = asyncHandler(async (req, res) => {
+  const { email, password } = req.body;
+
+  const user = await User.findOne({ email }).select("email password name _id");
+
+  if(!user)
+    throw new Error("Unable to login. User not found.");
+
+  let isCorrectPassword = await user.comparePassword(password);
+
+  if(!isCorrectPassword)
+    throw new Error("Unable to login. Invalid password.");
+
+  const userDetailsWithToken = await generateToken(user);
+
+  return res.status(201).json({
+    status: true,
+    user: userDetailsWithToken,
+    msg: "User logged in successfully"
+  })
+
 });

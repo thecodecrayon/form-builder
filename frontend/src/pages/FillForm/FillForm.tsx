@@ -6,7 +6,7 @@ type Field = {
   options: string[];
 };
 
-type FormProps = {
+type FillFormProps = {
   form: {
     _id: string;
     title: string;
@@ -15,7 +15,7 @@ type FormProps = {
   };
 };
 
-const Form = ({ form }: FormProps) => {
+const FillForm = ({ form }: FillFormProps) => {
   if (!form) return <p>No form data available</p>;
 
   return (
@@ -28,14 +28,14 @@ const Form = ({ form }: FormProps) => {
           case "textarea":
             return (
               <div key={field._id}>
-                <label>{field.label}</label>
+                <label>{field.label}:{" "}</label>
                 <textarea required={field.required} />
               </div>
             );
           case "select":
             return (
               <div key={field._id}>
-                <label>{field.label}</label>
+                <label>{field.label}:{" "}</label>
                 <select required={field.required}>
                   {field.options.map((opt, i) => (
                     <option key={i} value={opt}>
@@ -48,7 +48,7 @@ const Form = ({ form }: FormProps) => {
           default:
             return (
               <div key={field._id}>
-                <label>{field.label}</label>
+                <label>{field.label}:{" "}</label>
                 <input type={field.type} required={field.required} />
               </div>
             );
@@ -60,4 +60,4 @@ const Form = ({ form }: FormProps) => {
   );
 };
 
-export default Form;
+export default FillForm;

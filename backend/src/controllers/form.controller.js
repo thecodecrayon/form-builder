@@ -6,6 +6,7 @@ export const getForms = asyncHandler(async (req, res) => {
   const forms = await Form.find({}, {
     title: 1,
     description: 1,
+    fields: 1,
     _id: 1
   });
 
