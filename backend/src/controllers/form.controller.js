@@ -6,8 +6,8 @@ export const getForms = asyncHandler(async (req, res) => {
   const forms = await Form.find({}, {
     title: 1,
     description: 1,
-    fields: 1,
-    _id: 1
+    _id: 1,
+    createdAt: 1
   });
 
   if(!forms)
@@ -19,6 +19,21 @@ export const getForms = asyncHandler(async (req, res) => {
     msg: "forms loaded successfully."
   })
 });
+
+export const getFormById = asyncHandler(async (req, res) => {
+  const { formId } = req.params;
+
+  const form = await Form.findById(formId).select('-_id title description fields');
+
+  if(!form) 
+    throw new Error("Unable to find form with the given ID.");
+
+  return res.status(200).json({
+    status: true,
+    form,
+    msg: "Form fetched successfully."
+  })
+})
 
 export const createForm = asyncHandler(async (req, res) => {
 
@@ -38,8 +53,8 @@ export const createForm = asyncHandler(async (req, res) => {
     throw new Error("Unable to create form. Some error occured!");
 
   return res.status(201).json({
-    status: "success",
-    form,
+    status: true,
     msg: "form created successfully."
   });
 });
+

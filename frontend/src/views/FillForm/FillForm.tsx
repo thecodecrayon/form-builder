@@ -1,14 +1,19 @@
 import useFormData from "../../hooks/useFormData.js";
+import useFormDetail from "../../hooks/useFormDetail.js";
 import FillForm from "../../pages/FillForm/FillForm.js";
 
 const FillFormView = () => {
   const {
-    forms
-  } = useFormData();
+    form,
+    loading,
+    error
+  } = useFormDetail();
 
   return (
     <FillForm
-      form={forms?.[0]} />
+      error={error}
+      loading={loading}
+      form={form} />
   );
 }
 

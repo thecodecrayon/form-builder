@@ -9,6 +9,7 @@ import CreateFormView from "./views/CreateForm/CreateForm";
 import ProfileView from "./views/Profile/Profile";
 import SettingsView from "./views/Settings/Settings";
 import SignupView from "./views/Signup/Signup";
+import NoPageFound from "./views/Default/NoPageFound";
 
 const App = () => {
   return (
@@ -34,7 +35,7 @@ const App = () => {
 
       {/* PROTECTED ROUTES*/}
       <Route
-        path="/fillform"
+        path="/fillform/:formId"
         element={
           <ProtectedRoute>
             <FillFormView />
@@ -57,7 +58,7 @@ const App = () => {
       </Route>
 
       {/* DEFAULT REDIRECT */}
-      <Route path="*" element={<LoginView />} />
+      <Route path="*" element={<NoPageFound />} />
     </Routes>
   );
 };
