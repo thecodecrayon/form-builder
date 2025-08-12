@@ -14,7 +14,7 @@ export const getUsers = asyncHandler(async (req, res) => {
     throw new Error("Unable to fetch users. Some error occured!");
 
   return res.status(200).json({
-    status: "success",
+    status: true,
     users,
     msg: "users loaded successfully."
   })
@@ -37,11 +37,13 @@ export const createUser = asyncHandler(async (req, res) => {
   if(!user)
     throw new Error("Unable to create user. Some error occured!");
 
+  const userDetailsWithToken = await generateToken(user);
+
   return res.status(201).json({
-    status: "success",
-    user,
-    msg: "user created successfully."
-  });
+    status: true,
+    user: userDetailsWithToken,
+    msg: "User signed up successfully"
+  })
 });
 
 export const loginUser = asyncHandler(async (req, res) => {
