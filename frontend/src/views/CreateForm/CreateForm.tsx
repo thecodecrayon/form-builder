@@ -15,7 +15,10 @@ const CreateFormView = () => {
     addOption,
     removeField,
     removeOption,
-    handleSubmit
+    handleSubmit,
+    isSubmitting,
+    isPreviewOpen,
+    handlePreviewClick
   } = useCreateForm();
 
   return (
@@ -32,7 +35,10 @@ const CreateFormView = () => {
       addOption={addOption}
       removeField={removeField}
       removeOption={removeOption}
-      handleSubmit={handleSubmit} />
+      handleSubmit={handleSubmit}
+      isSubmitting={isSubmitting}
+      isPreviewOpen={isPreviewOpen}
+      handlePreviewClick={handlePreviewClick} />
   )
 }
 

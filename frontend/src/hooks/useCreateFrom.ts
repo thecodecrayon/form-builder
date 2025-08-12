@@ -9,6 +9,10 @@ const useCreateForm = () => {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [fields, setFields] = useState<FormField[]>([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [newOption, setNewOption] = useState<Record<number, string>>({});
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
+
   const navigate = useNavigate();
 
   const addField = () => {
@@ -50,6 +54,10 @@ const useCreateForm = () => {
     setDescription(e.target.value);
   }
 
+  const handlePreviewClick = (val: boolean) => {
+    setIsPreviewOpen(val);
+  };
+
   const createDynamicFrom = async () => {
     setLoading(true);
     setError(null);
@@ -81,7 +89,9 @@ const useCreateForm = () => {
   }
 
   const handleSubmit = () => {
+    setIsSubmitting(true);
     createDynamicFrom();
+    setIsSubmitting(false);
   };
 
 
@@ -98,7 +108,10 @@ const useCreateForm = () => {
     addOption,
     removeField,
     removeOption,
-    handleSubmit
+    handleSubmit,
+    isSubmitting,
+    isPreviewOpen,
+    handlePreviewClick
   }
 }
 

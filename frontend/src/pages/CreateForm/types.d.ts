@@ -19,4 +19,7 @@ export interface CreateFormProps {
   removeField: (index: number) => void;
   removeOption: (fieldIndex: number, optionIndex: number) => void;
   handleSubmit: () => void;
+  isSubmitting: boolean;
+  isPreviewOpen: boolean;
+  handlePreviewClick: (val: boolean) => void;
 }

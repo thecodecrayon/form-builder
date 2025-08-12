@@ -23,6 +23,12 @@ export interface FillFormProps {
   error: string | null;
   loading: boolean;
   form: Form | null;
+  formData: Record<string, any>;
+  isSubmitting: boolean;
+  filePreviews: Record<string, { file: File; preview?: string; type: string }>;
+  handleSubmit: (e: React.FormEvent) => void;
+  handleFileChange: (name: string, file: File | null) => void;
+  handleChange: (name: string, value: any) => void;
 };
 
 export interface SingleForm {

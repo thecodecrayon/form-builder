@@ -5,14 +5,26 @@ const FillFormView = () => {
   const {
     form,
     loading,
-    error
+    error,
+    formData,
+    isSubmitting,
+    filePreviews,
+    handleSubmit,
+    handleFileChange,
+    handleChange
   } = useFormDetail();
 
   return (
     <FillForm
       error={error}
       loading={loading}
-      form={form} />
+      form={form}
+      formData={formData}
+      isSubmitting={isSubmitting}
+      filePreviews={filePreviews}
+      handleSubmit={handleSubmit}
+      handleFileChange={handleFileChange}
+      handleChange={handleChange} />
   );
 }
 

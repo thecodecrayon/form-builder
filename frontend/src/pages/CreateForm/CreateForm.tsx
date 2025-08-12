@@ -1,10 +1,12 @@
 import { useState } from "react";
 import type { CreateFormProps } from "./types";
+import { baseInputStyle, focusStyle } from "./style";
+import Button from "../../components/Button";
+import PreviewPopup from "../../components/PreviewPopup";
+import NewFieldSection from "../../components/NewFieldSection";
 
 const CreateForm = (props: CreateFormProps) => {
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [newOption, setNewOption] = useState<Record<number, string>>({});
-  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
 
   const {
     error,
@@ -19,7 +21,10 @@ const CreateForm = (props: CreateFormProps) => {
     addOption,
     removeField,
     removeOption,
-    handleSubmit
+    handleSubmit,
+    isSubmitting,
+    isPreviewOpen,
+    handlePreviewClick
   } = props;
 
   const handleAddOption = (index: number) => {
@@ -29,46 +34,6 @@ const CreateForm = (props: CreateFormProps) => {
       setNewOption(prev => ({ ...prev, [index]: "" }));
     }
   };
-
-  const handleFormSubmit = async () => {
-    setIsSubmitting(true);
-    await handleSubmit();
-    setIsSubmitting(false);
-  };
-
-  const handlePreviewClick = () => {
-    setIsPreviewOpen(true);
-  };
-
-  const baseInputStyle: React.CSSProperties = {
-    width: "100%",
-    padding: "0.75rem",
-    borderRadius: "8px",
-    border: "1.5px solid #e5e7eb",
-    fontSize: "1rem",
-    outline: "none",
-    transition: "border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out",
-    boxSizing: "border-box",
-    fontFamily: "inherit"
-  };
-
-  const focusStyle = {
-    borderColor: "#3b82f6",
-    boxShadow: "0 0 0 3px rgba(59, 130, 246, 0.1)"
-  };
-
-  const fieldTypeOptions = [
-    { value: "text", label: "Text", icon: "📝" },
-    { value: "textarea", label: "Textarea", icon: "📄" },
-    { value: "number", label: "Number", icon: "🔢" },
-    { value: "date", label: "Date", icon: "📅" },
-    { value: "email", label: "Email", icon: "✉️" },
-    { value: "password", label: "Password", icon: "🔒" },
-    { value: "select", label: "Dropdown", icon: "📋" },
-    { value: "checkbox", label: "Checkbox", icon: "☑️" },
-    { value: "radio", label: "Radio", icon: "🔘" },
-    { value: "file", label: "File Upload", icon: "📎" }
-  ];
 
   if (loading) {
     return (
@@ -118,7 +83,7 @@ const CreateForm = (props: CreateFormProps) => {
           maxWidth: "800px",
           margin: "0 auto"
         }}>
-          {/* Header */}
+
           <div style={{
             backgroundColor: "#ffffff",
             borderRadius: "16px",
@@ -166,7 +131,6 @@ const CreateForm = (props: CreateFormProps) => {
               </div>
             )}
 
-            {/* Form Title */}
             <div style={{ marginBottom: "1.5rem" }}>
               <label style={{
                 display: "block",
@@ -191,7 +155,6 @@ const CreateForm = (props: CreateFormProps) => {
               />
             </div>
 
-            {/* Form Description */}
             <div style={{ marginBottom: "2rem" }}>
               <label style={{
                 display: "block",
@@ -221,7 +184,6 @@ const CreateForm = (props: CreateFormProps) => {
             </div>
           </div>
 
-          {/* Fields Section */}
           <div style={{
             backgroundColor: "#ffffff",
             borderRadius: "16px",
@@ -284,7 +246,6 @@ const CreateForm = (props: CreateFormProps) => {
               </button>
             </div>
 
-            {/* Field List */}
             <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
               {fields?.map((field, index) => (
                 <div
@@ -297,7 +258,7 @@ const CreateForm = (props: CreateFormProps) => {
                     position: "relative"
                   }}
                 >
-                  {/* Field Header */}
+
                   <div style={{
                     display: "flex",
                     justifyContent: "space-between",
@@ -342,104 +303,11 @@ const CreateForm = (props: CreateFormProps) => {
                     </button>
                   </div>
 
-                  {/* Field Configuration */}
-                  <div style={{
-                    display: "grid",
-                    gridTemplateColumns: "1fr auto auto",
-                    gap: "1rem",
-                    alignItems: "end",
-                    marginBottom: "1rem"
-                  }}>
-                    {/* Field Label */}
-                    <div>
-                      <label style={{
-                        display: "block",
-                        fontWeight: "500",
-                        marginBottom: "0.5rem",
-                        color: "#374151",
-                        fontSize: "0.85rem"
-                      }}>
-                        Field Label
-                      </label>
-                      <input
-                        type="text"
-                        placeholder="Enter field label..."
-                        value={field.label}
-                        onChange={(e) => updateField(index, "label", e.target.value)}
-                        style={{
-                          ...baseInputStyle,
-                          fontSize: "0.9rem",
-                          padding: "0.6rem"
-                        }}
-                        onFocus={(e) => Object.assign(e.target.style, focusStyle)}
-                        onBlur={(e) => {
-                          e.target.style.borderColor = "#e5e7eb";
-                          e.target.style.boxShadow = "none";
-                        }}
-                      />
-                    </div>
+                  <NewFieldSection
+                    field={field}
+                    updateField={updateField}
+                    index={index} />
 
-                    {/* Field Type */}
-                    <div>
-                      <label style={{
-                        display: "block",
-                        fontWeight: "500",
-                        marginBottom: "0.5rem",
-                        color: "#374151",
-                        fontSize: "0.85rem"
-                      }}>
-                        Type
-                      </label>
-                      <select
-                        value={field.type}
-                        onChange={(e) => updateField(index, "type", e.target.value)}
-                        style={{
-                          ...baseInputStyle,
-                          fontSize: "0.9rem",
-                          padding: "0.6rem",
-                          minWidth: "140px"
-                        }}
-                        onFocus={(e) => Object.assign(e.target.style, focusStyle)}
-                        onBlur={(e) => {
-                          e.target.style.borderColor = "#e5e7eb";
-                          e.target.style.boxShadow = "none";
-                        }}
-                      >
-                        {fieldTypeOptions.map((option) => (
-                          <option key={option.value} value={option.value}>
-                            {option.icon} {option.label}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-
-                    {/* Required Checkbox */}
-                    <div style={{ display: "flex", alignItems: "center", paddingTop: "1.8rem" }}>
-                      <label style={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "0.5rem",
-                        cursor: "pointer",
-                        fontSize: "0.85rem",
-                        color: "#374151",
-                        fontWeight: "500"
-                      }}>
-                        <input
-                          type="checkbox"
-                          checked={field.required}
-                          onChange={(e) => updateField(index, "required", e.target.checked)}
-                          style={{
-                            width: "16px",
-                            height: "16px",
-                            accentColor: "#3b82f6"
-                          }}
-                        />
-                        Required
-                      </label>
-                    </div>
-                  </div>
-
-                  {/* Options for select, checkbox, radio */}
                   {(field.type === "select" || field.type === "checkbox" || field.type === "radio") && (
                     <div style={{
                       borderTop: "1px solid #e5e7eb",
@@ -471,7 +339,6 @@ const CreateForm = (props: CreateFormProps) => {
                         </div>
                       </div>
 
-                      {/* Option List */}
                       <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem", marginBottom: "1rem" }}>
                         {(field.options || []).map((opt, optIndex) => (
                           <div key={optIndex} style={{
@@ -540,7 +407,6 @@ const CreateForm = (props: CreateFormProps) => {
                         ))}
                       </div>
 
-                      {/* Add New Option */}
                       <div style={{
                         display: "flex",
                         gap: "0.5rem"
@@ -592,7 +458,6 @@ const CreateForm = (props: CreateFormProps) => {
                 </div>
               ))}
 
-              {/* Empty State */}
               {(!fields || fields.length === 0) && (
                 <div style={{
                   textAlign: "center",
@@ -618,7 +483,6 @@ const CreateForm = (props: CreateFormProps) => {
             </div>
           </div>
 
-          {/* Submit Buttons */}
           <div style={{
             backgroundColor: "#ffffff",
             borderRadius: "16px",
@@ -627,22 +491,22 @@ const CreateForm = (props: CreateFormProps) => {
             boxShadow: "0 8px 32px rgba(0, 0, 0, 0.08)",
             textAlign: "center"
           }}>
-            <button
-              onClick={handlePreviewClick}
+            <Button
+              onClick={() => handlePreviewClick(true)}
               disabled={!title.trim() || !fields?.length}
               style={{
-                background: !title.trim() || !fields?.length 
-                  ? "#e5e7eb" 
+                background: !title.trim() || !fields?.length
+                  ? "#e5e7eb"
                   : "linear-gradient(135deg, rgb(16, 185, 129), rgb(5, 150, 105))",
-                color: !title.trim() || !fields?.length 
-                  ? "#9ca3af" 
+                color: !title.trim() || !fields?.length
+                  ? "#9ca3af"
                   : "#ffffff",
                 border: "none",
                 borderRadius: "12px",
                 padding: "1rem 3rem",
                 fontSize: "1rem",
                 fontWeight: "600",
-                cursor:  !title.trim() || !fields?.length ? "not-allowed" : "pointer",
+                cursor: !title.trim() || !fields?.length ? "not-allowed" : "pointer",
                 transition: "all 0.15s ease-in-out",
                 minWidth: "200px",
                 position: "relative",
@@ -661,16 +525,16 @@ const CreateForm = (props: CreateFormProps) => {
               }}
             >
               👁️ Preview Form
-            </button>
-            <button
-              onClick={handleFormSubmit}
+            </Button>
+            <Button
+              onClick={handleSubmit}
               disabled={isSubmitting || !title.trim() || !fields?.length}
               style={{
-                background: isSubmitting || !title.trim() || !fields?.length 
-                  ? "#e5e7eb" 
+                background: isSubmitting || !title.trim() || !fields?.length
+                  ? "#e5e7eb"
                   : "linear-gradient(135deg, #3b82f6, #1d4ed8)",
-                color: isSubmitting || !title.trim() || !fields?.length 
-                  ? "#9ca3af" 
+                color: isSubmitting || !title.trim() || !fields?.length
+                  ? "#9ca3af"
                   : "#ffffff",
                 border: "none",
                 borderRadius: "12px",
@@ -709,7 +573,7 @@ const CreateForm = (props: CreateFormProps) => {
               ) : (
                 "💾 Save Form"
               )}
-            </button>
+            </Button>
 
             {(!title.trim() || !fields?.length) && (
               <p style={{
@@ -725,431 +589,14 @@ const CreateForm = (props: CreateFormProps) => {
         </div>
       </div>
 
-      {/* Preview Modal */}
       {isPreviewOpen && (
-        <div 
-          style={{
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            backgroundColor: 'rgba(0, 0, 0, 0.5)',
-            backdropFilter: 'blur(4px)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            zIndex: 1000,
-            padding: '1rem',
-            fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif"
-          }}
-          onClick={() => setIsPreviewOpen(false)}
-        >
-          <div 
-            style={{
-              backgroundColor: '#ffffff',
-              borderRadius: '16px',
-              width: '100%',
-              maxWidth: '800px',
-              maxHeight: '90vh',
-              overflow: 'hidden',
-              boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
-              position: 'relative',
-              animation: 'modalSlideIn 0.3s ease-out'
-            }}
-            onClick={(e) => e.stopPropagation()}
-          >
-            <style>{`
-              @keyframes modalSlideIn {
-                from {
-                  opacity: 0;
-                  transform: scale(0.95) translateY(20px);
-                }
-                to {
-                  opacity: 1;
-                  transform: scale(1) translateY(0px);
-                }
-              }
-            `}</style>
-            
-            {/* Modal Header */}
-            <div style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              padding: '1.5rem 2rem',
-              borderBottom: '1px solid #e5e7eb',
-              backgroundColor: '#f9fafb'
-            }}>
-              <h2 style={{
-                margin: 0,
-                fontSize: '1.5rem',
-                fontWeight: '600',
-                color: '#1a1a1a'
-              }}>
-                Form Preview
-              </h2>
-              <button
-                onClick={() => setIsPreviewOpen(false)}
-                style={{
-                  background: 'none',
-                  border: 'none',
-                  fontSize: '1.5rem',
-                  cursor: 'pointer',
-                  padding: '0.5rem',
-                  borderRadius: '6px',
-                  color: '#6b7280',
-                  transition: 'all 0.15s ease',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  width: '32px',
-                  height: '32px'
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.backgroundColor = '#f3f4f6';
-                  e.currentTarget.style.color = '#374151';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.backgroundColor = 'transparent';
-                  e.currentTarget.style.color = '#6b7280';
-                }}
-              >
-                ✕
-              </button>
-            </div>
-
-            {/* Modal Content */}
-            <div style={{
-              maxHeight: 'calc(90vh - 80px)',
-              overflowY: 'auto',
-              padding: '2rem',
-              backgroundColor: '#fafafa'
-            }}>
-              <div style={{
-                maxWidth: "600px",
-                margin: "0 auto",
-                backgroundColor: "#ffffff",
-                borderRadius: "12px",
-                padding: "2.5rem",
-                boxShadow: "0 4px 16px rgba(0, 0, 0, 0.08)"
-              }}>
-                {/* Form Preview Header */}
-                <div style={{ marginBottom: "2.5rem", textAlign: "center" }}>
-                  <h1 style={{
-                    margin: "0 0 0.75rem",
-                    fontSize: "1.75rem",
-                    fontWeight: "700",
-                    color: "#1a1a1a",
-                    lineHeight: "1.2"
-                  }}>
-                    {title}
-                  </h1>
-                  {description && (
-                    <p style={{
-                      margin: 0,
-                      color: "#6b7280",
-                      fontSize: "1rem",
-                      lineHeight: "1.6"
-                    }}>
-                      {description}
-                    </p>
-                  )}
-                  <div style={{
-                    width: "50px",
-                    height: "3px",
-                    background: "linear-gradient(90deg, #3b82f6, #10b981)",
-                    borderRadius: "2px",
-                    margin: "1rem auto 0"
-                  }} />
-                </div>
-
-                {/* Form Fields Preview */}
-                <div style={{ display: "flex", flexDirection: "column", gap: "1.75rem" }}>
-                  {fields.map((field, index) => {
-                    const name = `field_${index}`;
-
-                    switch (field.type) {
-                      case "textarea":
-                        return (
-                          <div key={index}>
-                            <label style={{
-                              display: "block",
-                              fontWeight: "500",
-                              marginBottom: "0.5rem",
-                              color: "#374151",
-                              fontSize: "0.9rem"
-                            }}>
-                              {field.label} {field.required && <span style={{ color: "#ef4444" }}>*</span>}
-                            </label>
-                            <textarea
-                              rows={4}
-                              placeholder={`Enter your ${field.label.toLowerCase()}...`}
-                              style={{
-                                width: "100%",
-                                padding: "0.75rem",
-                                borderRadius: "8px",
-                                border: "1.5px solid #e5e7eb",
-                                fontSize: "1rem",
-                                outline: "none",
-                                resize: "vertical",
-                                minHeight: "100px",
-                                boxSizing: "border-box",
-                                fontFamily: "inherit"
-                              }}
-                              disabled
-                            />
-                          </div>
-                        );
-
-                      case "select":
-                        return (
-                          <div key={index}>
-                            <label style={{
-                              display: "block",
-                              fontWeight: "500",
-                              marginBottom: "0.5rem",
-                              color: "#374151",
-                              fontSize: "0.9rem"
-                            }}>
-                              {field.label} {field.required && <span style={{ color: "#ef4444" }}>*</span>}
-                            </label>
-                            <select
-                              style={{
-                                width: "100%",
-                                padding: "0.75rem",
-                                borderRadius: "8px",
-                                border: "1.5px solid #e5e7eb",
-                                fontSize: "1rem",
-                                outline: "none",
-                                boxSizing: "border-box",
-                                fontFamily: "inherit"
-                              }}
-                              disabled
-                            >
-                              <option value="">Select an option...</option>
-                              {(field.options || []).map((opt, i) => (
-                                <option key={i} value={opt}>{opt}</option>
-                              ))}
-                            </select>
-                          </div>
-                        );
-
-                      case "checkbox":
-                        return (
-                          <div key={index}>
-                            <label style={{
-                              display: "block",
-                              fontWeight: "500",
-                              marginBottom: "0.75rem",
-                              color: "#374151",
-                              fontSize: "0.9rem"
-                            }}>
-                              {field.label} {field.required && <span style={{ color: "#ef4444" }}>*</span>}
-                            </label>
-                            <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
-                              {(field.options || []).length > 0 ? (
-                                field.options?.map((opt, i) => (
-                                  <label key={i} style={{
-                                    display: "flex",
-                                    alignItems: "center",
-                                    gap: "0.5rem",
-                                    cursor: "pointer",
-                                    padding: "0.5rem",
-                                    borderRadius: "6px"
-                                  }}>
-                                    <input
-                                      type="checkbox"
-                                      value={opt}
-                                      style={{
-                                        width: "16px",
-                                        height: "16px",
-                                        accentColor: "#3b82f6"
-                                      }}
-                                      disabled
-                                    />
-                                    <span style={{ fontSize: "0.9rem", color: "#374151" }}>{opt}</span>
-                                  </label>
-                                ))
-                              ) : (
-                                <label style={{
-                                  display: "flex",
-                                  alignItems: "center",
-                                  gap: "0.5rem",
-                                  cursor: "pointer"
-                                }}>
-                                  <input
-                                    type="checkbox"
-                                    style={{
-                                      width: "16px",
-                                      height: "16px",
-                                      accentColor: "#3b82f6"
-                                    }}
-                                    disabled
-                                  />
-                                  <span style={{ fontSize: "0.9rem", color: "#374151" }}>Check this box</span>
-                                </label>
-                              )}
-                            </div>
-                          </div>
-                        );
-
-                      case "radio":
-                        return (
-                          <div key={index}>
-                            <label style={{
-                              display: "block",
-                              fontWeight: "500",
-                              marginBottom: "0.75rem",
-                              color: "#374151",
-                              fontSize: "0.9rem"
-                            }}>
-                              {field.label} {field.required && <span style={{ color: "#ef4444" }}>*</span>}
-                            </label>
-                            <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
-                              {(field.options || []).map((opt, i) => (
-                                <label key={i} style={{
-                                  display: "flex",
-                                  alignItems: "center",
-                                  gap: "0.5rem",
-                                  cursor: "pointer",
-                                  padding: "0.5rem",
-                                  borderRadius: "6px"
-                                }}>
-                                  <input
-                                    type="radio"
-                                    name={name}
-                                    value={opt}
-                                    style={{
-                                      width: "16px",
-                                      height: "16px",
-                                      accentColor: "#3b82f6"
-                                    }}
-                                    disabled
-                                  />
-                                  <span style={{ fontSize: "0.9rem", color: "#374151" }}>{opt}</span>
-                                </label>
-                              ))}
-                            </div>
-                          </div>
-                        );
-
-                      case "file":
-                        return (
-                          <div key={index}>
-                            <label style={{
-                              display: "block",
-                              fontWeight: "500",
-                              marginBottom: "0.5rem",
-                              color: "#374151",
-                              fontSize: "0.9rem"
-                            }}>
-                              {field.label} {field.required && <span style={{ color: "#ef4444" }}>*</span>}
-                            </label>
-                            <div style={{
-                              border: "2px dashed #d1d5db",
-                              borderRadius: "8px",
-                              padding: "1.5rem",
-                              textAlign: "center",
-                              backgroundColor: "#f9fafb"
-                            }}>
-                              <div style={{ color: "#6b7280" }}>
-                                <div style={{ fontSize: "2rem", marginBottom: "0.5rem" }}>📁</div>
-                                <p style={{ margin: "0 0 0.25rem", fontWeight: "500", fontSize: "0.9rem" }}>
-                                  Drop your file here, or click to browse
-                                </p>
-                                <p style={{ margin: 0, fontSize: "0.8rem", opacity: 0.7 }}>
-                                  Any file type accepted
-                                </p>
-                              </div>
-                            </div>
-                          </div>
-                        );
-
-                      default:
-                        return (
-                          <div key={index}>
-                            <label style={{
-                              display: "block",
-                              fontWeight: "500",
-                              marginBottom: "0.5rem",
-                              color: "#374151",
-                              fontSize: "0.9rem"
-                            }}>
-                              {field.label} {field.required && <span style={{ color: "#ef4444" }}>*</span>}
-                            </label>
-                            <input
-                              type={field.type}
-                              placeholder={`Enter your ${field.label.toLowerCase()}...`}
-                              style={{
-                                width: "100%",
-                                padding: "0.75rem",
-                                borderRadius: "8px",
-                                border: "1.5px solid #e5e7eb",
-                                fontSize: "1rem",
-                                outline: "none",
-                                boxSizing: "border-box",
-                                fontFamily: "inherit"
-                              }}
-                              disabled
-                            />
-                          </div>
-                        );
-                    }
-                  })}
-
-                  {/* Empty State */}
-                  {fields.length === 0 && (
-                    <div style={{
-                      textAlign: "center",
-                      padding: "2rem",
-                      color: "#6b7280"
-                    }}>
-                      <div style={{ fontSize: "2.5rem", marginBottom: "1rem" }}>📝</div>
-                      <p style={{ margin: 0, fontSize: "0.9rem" }}>
-                        No fields added to this form yet
-                      </p>
-                    </div>
-                  )}
-                </div>
-
-                {/* Preview Submit Button */}
-                {fields.length > 0 && (
-                  <div style={{ marginTop: "2.5rem", textAlign: "center" }}>
-                    <button
-                      type="button"
-                      disabled
-                      style={{
-                        background: "linear-gradient(135deg, #3b82f6, #1d4ed8)",
-                        color: "#ffffff",
-                        border: "none",
-                        borderRadius: "10px",
-                        padding: "0.875rem 2.5rem",
-                        fontSize: "1rem",
-                        fontWeight: "600",
-                        cursor: "not-allowed",
-                        opacity: 0.7,
-                        minWidth: "180px"
-                      }}
-                    >
-                      Submit Form
-                    </button>
-                    <p style={{
-                      margin: "0.75rem 0 0",
-                      fontSize: "0.8rem",
-                      color: "#9ca3af",
-                      fontStyle: "italic"
-                    }}>
-                      This is a preview - form submission is not functional
-                    </p>
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-        </div>
+        <PreviewPopup
+          handlePreviewClick={handlePreviewClick}
+          title={title}
+          description={description}
+          fields={fields} />
       )}
-      </>
+    </>
   );
 }
 
