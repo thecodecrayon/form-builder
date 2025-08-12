@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
+import { getToken } from "../utils/commonMethods";
 
 interface Field {
   _id: string;
@@ -24,8 +25,16 @@ const useFormDetail = () => {
   const fetchForms = async () => {
     setError(null);
     setLoading(true);
+
+    const authToken = await getToken();
     try {
-      const res = await fetch(`http://localhost:3000/api/v1/forms/${formId}`);
+      const res = await fetch(`http://localhost:3000/api/v1/forms/${formId}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${authToken}`
+        }
+      });
       if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
 
       const data = await res.json();

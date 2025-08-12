@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { getToken } from "../utils/commonMethods";
 
 interface FormField {
   label: string;
@@ -59,11 +60,14 @@ const useCreateForm = () => {
     setLoading(true);
     setError(null);
 
+    const authToken = await getToken();
+
     try {
       const response = await fetch("http://localhost:3000/api/v1/forms", {
         method: "POST",
         headers: {
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${authToken}`
         },
         body: JSON.stringify({ title, description, fields })
       });

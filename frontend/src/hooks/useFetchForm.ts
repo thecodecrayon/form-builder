@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { getToken } from "../utils/commonMethods";
 
 interface Form {
   title: string,
@@ -16,11 +17,12 @@ const useFetchForm = () => {
     setLoading(true);
     setError(null);
 
+    const authToken = await getToken();
     try {
       const response = await fetch("http://localhost:3000/api/v1/forms", {
         method: "GET",
         headers: {
-          "Content-Type": "application/json"
+          "Authorization": `Bearer ${authToken}`
         }
       });
 
